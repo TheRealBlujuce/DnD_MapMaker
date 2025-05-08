@@ -201,6 +201,67 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6977742549655359914, guid: 6296d570021fa534cb2e87931207484d, type: 3}
   m_PrefabInstance: {fileID: 473000931}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &113772030
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 6181541275732023394, guid: 6b609843553d33446b66d3b5074c0bb2, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6181541275732023394, guid: 6b609843553d33446b66d3b5074c0bb2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -20.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 6181541275732023394, guid: 6b609843553d33446b66d3b5074c0bb2, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6181541275732023394, guid: 6b609843553d33446b66d3b5074c0bb2, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6181541275732023394, guid: 6b609843553d33446b66d3b5074c0bb2, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6181541275732023394, guid: 6b609843553d33446b66d3b5074c0bb2, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6181541275732023394, guid: 6b609843553d33446b66d3b5074c0bb2, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6181541275732023394, guid: 6b609843553d33446b66d3b5074c0bb2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6181541275732023394, guid: 6b609843553d33446b66d3b5074c0bb2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6181541275732023394, guid: 6b609843553d33446b66d3b5074c0bb2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8819221140596436002, guid: 6b609843553d33446b66d3b5074c0bb2, type: 3}
+      propertyPath: tokenIcon
+      value: 
+      objectReference: {fileID: -2318912395607788607, guid: 22b8168c9a9bd0a42b2898e16a0b995f, type: 3}
+    - target: {fileID: 9128946293557983970, guid: 6b609843553d33446b66d3b5074c0bb2, type: 3}
+      propertyPath: m_Name
+      value: Character Token (3)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6b609843553d33446b66d3b5074c0bb2, type: 3}
 --- !u!4 &139597793 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6977742549655359914, guid: 6296d570021fa534cb2e87931207484d, type: 3}
@@ -1827,21 +1888,21 @@ MonoBehaviour:
     iconBg: {fileID: 0}
     entryName: Drone
     color: {r: 1, g: 1, b: 1, a: 1}
-  - icon: {fileID: 2661678937527391517, guid: 3ad38512e3ec08645abf194fa8f121ae, type: 3}
+  - icon: {fileID: 4112356383579328530, guid: 0765a874a38838a4ca782aa8e8cabd47, type: 3}
     iconBg: {fileID: 0}
-    entryName: Burrower
+    entryName: Drone
     color: {r: 1, g: 1, b: 1, a: 1}
-  - icon: {fileID: -8934096127021500474, guid: 219ed699854933742af75642e4dd80ae, type: 3}
+  - icon: {fileID: 4112356383579328530, guid: 0765a874a38838a4ca782aa8e8cabd47, type: 3}
     iconBg: {fileID: 0}
-    entryName: Screecher
+    entryName: Drone
     color: {r: 1, g: 1, b: 1, a: 1}
-  - icon: {fileID: 5924172039620091632, guid: b600f14af8949a94ebc8f852d0eda5e2, type: 3}
+  - icon: {fileID: 4112356383579328530, guid: 0765a874a38838a4ca782aa8e8cabd47, type: 3}
     iconBg: {fileID: 0}
-    entryName: Harbinger
+    entryName: Drone
     color: {r: 1, g: 1, b: 1, a: 1}
-  - icon: {fileID: 85258321531837389, guid: 904537e1ea113a442b7b204e2ae305c5, type: 3}
+  - icon: {fileID: 4112356383579328530, guid: 0765a874a38838a4ca782aa8e8cabd47, type: 3}
     iconBg: {fileID: 0}
-    entryName: Brood Lord
+    entryName: Drone
     color: {r: 1, g: 1, b: 1, a: 1}
   entryPrefab: {fileID: 6115946035563028017, guid: a58884aba8365324cb464e79b1811ee8, type: 3}
   initiativeHolder: {fileID: 686664151}
@@ -19626,7 +19687,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6181541275732023394, guid: 6b609843553d33446b66d3b5074c0bb2, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -21.5
+      value: -21.84
       objectReference: {fileID: 0}
     - target: {fileID: 6181541275732023394, guid: 6b609843553d33446b66d3b5074c0bb2, type: 3}
       propertyPath: m_LocalPosition.z
@@ -19663,7 +19724,7 @@ PrefabInstance:
     - target: {fileID: 8819221140596436002, guid: 6b609843553d33446b66d3b5074c0bb2, type: 3}
       propertyPath: tokenIcon
       value: 
-      objectReference: {fileID: -2318912395607788607, guid: 22b8168c9a9bd0a42b2898e16a0b995f, type: 3}
+      objectReference: {fileID: -2804428368996529276, guid: a955f34d6a62c45fe96f3a70965cee65, type: 3}
     - target: {fileID: 9128946293557983970, guid: 6b609843553d33446b66d3b5074c0bb2, type: 3}
       propertyPath: m_Name
       value: Character Token (2)
@@ -20728,11 +20789,12 @@ SceneRoots:
   - {fileID: 619394802}
   - {fileID: 378536786}
   - {fileID: 696623716}
-  - {fileID: 4746708061465128348}
   - {fileID: 641140783}
   - {fileID: 189748499}
   - {fileID: 523080556}
+  - {fileID: 4746708061465128348}
   - {fileID: 1899142340}
+  - {fileID: 113772030}
   - {fileID: 711289940}
   - {fileID: 722637369}
   - {fileID: 1836735784}

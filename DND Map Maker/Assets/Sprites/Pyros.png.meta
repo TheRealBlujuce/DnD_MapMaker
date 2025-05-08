@@ -171,7 +171,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Pyros_0: 7096094584921158304
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

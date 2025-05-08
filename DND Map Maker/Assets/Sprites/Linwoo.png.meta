@@ -171,7 +171,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Linwoo_0: -4352818370510459181
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

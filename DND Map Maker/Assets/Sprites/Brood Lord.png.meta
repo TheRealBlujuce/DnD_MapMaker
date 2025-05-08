@@ -171,7 +171,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Brood Lord_0: 85258321531837389
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

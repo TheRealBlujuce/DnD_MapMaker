@@ -49,12 +49,12 @@ public class CameraController2D : MonoBehaviour
 
     void HandlePan()
     {
-        if (Input.GetMouseButtonDown(2))
+        if (Input.GetMouseButtonDown(0) && Input.GetKey(KeyCode.LeftShift))
         {
             lastMousePosition = cam.ScreenToWorldPoint(Input.mousePosition);
         }
 
-        if (Input.GetMouseButton(2))
+        if (Input.GetMouseButton(0) && Input.GetKey(KeyCode.LeftShift))
         {
             Vector3 currentMousePosition = cam.ScreenToWorldPoint(Input.mousePosition);
             Vector3 delta = lastMousePosition - currentMousePosition;

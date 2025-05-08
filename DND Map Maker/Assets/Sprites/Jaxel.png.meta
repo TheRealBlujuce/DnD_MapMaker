@@ -171,7 +171,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Jaxel_0: 4193638754774259466
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

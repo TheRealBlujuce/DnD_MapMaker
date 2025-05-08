@@ -2507,7 +2507,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 16.875
+  orthographic size: 30
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -3758,7 +3758,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &686664152
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -57321,7 +57321,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1567849114
 RectTransform:
   m_ObjectHideFlags: 0
@@ -66263,7 +66263,7 @@ PrefabInstance:
     - target: {fileID: 8819221140596436002, guid: 6b609843553d33446b66d3b5074c0bb2, type: 3}
       propertyPath: tokenIcon
       value: 
-      objectReference: {fileID: -2318912395607788607, guid: 22b8168c9a9bd0a42b2898e16a0b995f, type: 3}
+      objectReference: {fileID: -2804428368996529276, guid: a955f34d6a62c45fe96f3a70965cee65, type: 3}
     - target: {fileID: 9128946293557983970, guid: 6b609843553d33446b66d3b5074c0bb2, type: 3}
       propertyPath: m_Name
       value: Ruben
