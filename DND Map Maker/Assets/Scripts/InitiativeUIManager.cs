@@ -10,12 +10,15 @@ public class InitiativeUIManager : MonoBehaviour
     public class InitiativeEntry
     {
         public Sprite icon;
-        public Sprite iconBg;
+        public int initiative;
         public string entryName;
         public Color color = Color.white;
     }
 
+    public List<InitiativeEntry> playerEntries = new List<InitiativeEntry>();
+    public List<InitiativeEntry> enemyEntries = new List<InitiativeEntry>();
     public List<InitiativeEntry> entries = new List<InitiativeEntry>();
+    [SerializeField] private List<GameObject> spawnedEntries = new List<GameObject>();
     public GameObject entryPrefab;
     public GameObject initiativeHolder;
     public float spacing = 80f;
@@ -24,7 +27,7 @@ public class InitiativeUIManager : MonoBehaviour
     public float highlightScale = 1.2f;
     public float fadeAmount = 0.25f;
 
-    private List<GameObject> spawnedEntries = new List<GameObject>();
+    
     private int selectedIndex = 0;
     private float scrollOffset = 0f;
 
@@ -37,13 +40,13 @@ public class InitiativeUIManager : MonoBehaviour
     private bool isAnimating = false;
     private bool isScrolling = false;
 
+    private bool isUpdating;
 
 
     void Start()
     {
-        StartCoroutine(GenerateAllEntriesCoroutine());
         UpdateVisuals();
-        StartCoroutine(ShowTurnBanner(entries[selectedIndex].entryName));
+        
     }
 
     void Update()
@@ -69,12 +72,24 @@ public class InitiativeUIManager : MonoBehaviour
     }
 
 
-    IEnumerator GenerateAllEntriesCoroutine()
+    IEnumerator UpdateAllEntriesCoroutine(List<InitiativeEntry> newEntryList)
     {
-        for (int i = 0; i < entries.Count; i++)
+        isUpdating = true;
+
+        // Destroy all spawned entries
+        for (int i = 0; i < spawnedEntries.Count; i++)
         {
-            InitiativeEntry data = entries[i];
-            GameObject go = Instantiate(entryPrefab, transform);
+            Destroy(spawnedEntries[i]);
+            yield return null;
+        }
+
+        spawnedEntries.Clear(); //  Now safe to clear
+
+        // Spawn new entries
+        for (int i = 0; i < newEntryList.Count; i++)
+        {
+            InitiativeEntry data = newEntryList[i];
+            GameObject go = Instantiate(entryPrefab, initiativeHolder.transform);
             go.name = $"Entry_{i}";
 
             RectTransform rt = go.GetComponent<RectTransform>();
@@ -93,15 +108,19 @@ public class InitiativeUIManager : MonoBehaviour
             if (!go.TryGetComponent(out CanvasGroup cg))
                 cg = go.AddComponent<CanvasGroup>();
 
-            go.transform.parent = initiativeHolder.transform;
-
             spawnedEntries.Add(go);
 
             yield return null; // wait one frame between spawns
         }
 
+        // Optionally reset scroll position and selected index if needed
+        selectedIndex = 0;
+        targetOffset = 0f;
+        isUpdating = false;
         turnBanner.transform.SetAsLastSibling();
+        yield return ShowTurnBanner(entries[selectedIndex].entryName);
     }
+
 
     IEnumerator ShowTurnBanner(string playerName)
     {
@@ -162,20 +181,29 @@ public class InitiativeUIManager : MonoBehaviour
 
     void UpdateVisuals()
     {
-        scrollOffset = Mathf.Lerp(scrollOffset, targetOffset, Time.deltaTime * scrollSpeed);
-
-        for (int i = 0; i < spawnedEntries.Count; i++)
+        if (!isUpdating)
         {
-            GameObject go = spawnedEntries[i];
-            RectTransform rt = go.GetComponent<RectTransform>();
-            CanvasGroup cg = go.GetComponent<CanvasGroup>();
+            scrollOffset = Mathf.Lerp(scrollOffset, targetOffset, Time.deltaTime * scrollSpeed);
 
-            float y = -i * spacing + scrollOffset;
-            rt.anchoredPosition = new Vector2(0, y);
+            for (int i = 0; i < spawnedEntries.Count; i++)
+            {
+                GameObject go = spawnedEntries[i];
+                RectTransform rt = go.GetComponent<RectTransform>();
+                CanvasGroup cg = go.GetComponent<CanvasGroup>();
 
-            bool isSelected = i == selectedIndex;
-            float targetScale = isSelected ? highlightScale : 1f;
-            rt.localScale = Vector3.Lerp(rt.localScale, Vector3.one * targetScale, Time.deltaTime * 10f);
+                float y = -i * spacing + scrollOffset;
+                rt.anchoredPosition = new Vector2(0, y);
+
+                bool isSelected = i == selectedIndex;
+                float targetScale = isSelected ? highlightScale : 1f;
+                rt.localScale = Vector3.Lerp(rt.localScale, Vector3.one * targetScale, Time.deltaTime * 10f);
+            }
         }
+    }
+
+    public void UpdateInitiativeUI(List<InitiativeEntry> newEntries)
+    {
+        //Debug.Log("Updating Entries");
+        StartCoroutine(UpdateAllEntriesCoroutine(newEntries));
     }
 }
