@@ -38,7 +38,7 @@ public class TokenSettings : MonoBehaviour
         switch (characterSize)
         {
             case CharacterSize.Small:
-            targetTokenSize = 0.5f;
+            targetTokenSize = .75f;
             break;
 
             case CharacterSize.Medium:
@@ -50,11 +50,11 @@ public class TokenSettings : MonoBehaviour
             break;
 
             case CharacterSize.Huge:
-            targetTokenSize = 4f;
+            targetTokenSize = 5f;
             break;
 
             case CharacterSize.Gigantic:
-            targetTokenSize = 6f;
+            targetTokenSize = 7f;
             break;
 
         }

@@ -6,8 +6,8 @@ public class TokenPlacerButton : MonoBehaviour
     public GameObject tokenPrefab;
     public Sprite icon;
     public string baseName = "Enemy";
-    public Color color = Color.red;
-
+    public Color color = Color.white;
+    public CharacterSize characterSize = CharacterSize.Medium;
     public Camera mainCamera;
     public LayerMask placementLayer;
     public InitiativeUIManager initiativeUIManager;
@@ -25,6 +25,7 @@ public class TokenPlacerButton : MonoBehaviour
         placer.mainCamera = mainCamera;
         placer.placementLayer = placementLayer;
         placer.initiativeUIManager = initiativeUIManager;
+        placer.characterSize = characterSize;
 
         SpriteRenderer sr = ghost.GetComponent<SpriteRenderer>();
         if (sr)

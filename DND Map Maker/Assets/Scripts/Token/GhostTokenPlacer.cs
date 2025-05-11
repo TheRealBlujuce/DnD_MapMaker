@@ -9,7 +9,8 @@ public class GhostTokenPlacer : MonoBehaviour
     public GameObject tokenPrefab;
     public Sprite icon;
     public string baseName = "Enemy";
-    public Color color = Color.red;
+    public Color color = Color.white;
+    public CharacterSize characterSize = CharacterSize.Medium;
 
     [Header("Refs")]
     public Camera mainCamera;
@@ -68,6 +69,7 @@ public class GhostTokenPlacer : MonoBehaviour
         tokenGO.name = fullName;
         tokenGO.GetComponent<TokenSettings>().tokenIcon = icon;
         tokenGO.GetComponent<TokenSettings>().tokenIsEnemy = true;
+        tokenGO.GetComponent<TokenSettings>().characterSize = characterSize;
 
         Debug.Log($"Spawned {fullName} at {placementPos}");
 

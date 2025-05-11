@@ -13,7 +13,7 @@ public class DistanceMeasure : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(1) && !Input.GetKey(KeyCode.LeftShift)) // Right mouse button pressed
+        if (GameManager.Instance.IsToolActive(GameManager.ToolState.Line) && Input.GetMouseButtonDown(1) && !Input.GetKey(KeyCode.LeftShift)) // Right mouse button pressed
         {
             startPoint = GetMouseWorldPosition();
             isMeasuring = true;
@@ -23,7 +23,7 @@ public class DistanceMeasure : MonoBehaviour
             distanceText.gameObject.SetActive(true);
         }
 
-        if (Input.GetMouseButton(1) && !Input.GetKey(KeyCode.LeftShift) && isMeasuring)
+        if (GameManager.Instance.IsToolActive(GameManager.ToolState.Line) &&  Input.GetMouseButton(1) && !Input.GetKey(KeyCode.LeftShift) && isMeasuring)
         {
             Vector3 currentPoint = GetMouseWorldPosition();
             lineRenderer.SetPosition(1, currentPoint);
@@ -39,7 +39,7 @@ public class DistanceMeasure : MonoBehaviour
             }
         }
 
-        if (Input.GetMouseButtonUp(1) && !Input.GetKey(KeyCode.LeftShift) && isMeasuring)
+        if (GameManager.Instance.IsToolActive(GameManager.ToolState.Line) &&  Input.GetMouseButtonUp(1) && !Input.GetKey(KeyCode.LeftShift) && isMeasuring)
         {
             lineRenderer.enabled = false;
             isMeasuring = false;
