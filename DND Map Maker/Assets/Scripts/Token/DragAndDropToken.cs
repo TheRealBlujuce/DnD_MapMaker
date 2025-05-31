@@ -12,6 +12,7 @@ public class DragAndDropToken : MonoBehaviour
     void Start()
     {
         mainCamera = Camera.main;
+		SnapToGrid();
     }
 
     void OnMouseDown()

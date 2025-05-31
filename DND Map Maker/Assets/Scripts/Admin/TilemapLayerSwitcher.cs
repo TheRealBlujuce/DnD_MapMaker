@@ -1,6 +1,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
 
 public class TilemapLayerSwitcher : MonoBehaviour
@@ -22,8 +23,18 @@ public class TilemapLayerSwitcher : MonoBehaviour
     private string[] layerNames = { "Basement", "Ground Floor", "First Floor", "Second Floor", "Third Floor" };
     private Coroutine fadeCoroutine;
 
-    void Start()
+    void OnEnable()
     {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        AssignTilemapLayers();
+
         layers = new GameObject[] {
             basementLayer,   // Index 0 - Shift+1
             defaultLayer,    // Index 1 - Shift+2
@@ -31,10 +42,7 @@ public class TilemapLayerSwitcher : MonoBehaviour
             secondFloorLayer,// Index 3 - Shift+4
             thirdFloorLayer  // Index 4 - Shift+5
         };
-
-        ActivateLayer(1); // Default layer on startup
     }
-
     void Update()
     {
         if (Input.GetKey(KeyCode.LeftShift))
@@ -95,4 +103,43 @@ public class TilemapLayerSwitcher : MonoBehaviour
             yield return null;
         }
     }
+
+    #region Get the tilemap layers
+    public void AssignTilemapLayers()
+    {
+        basementLayer = FindLayer("Basement Layer");
+        defaultLayer = FindLayer("Ground Layer");
+        firstFloorLayer = FindLayer("Indoor Layer");
+        secondFloorLayer = FindLayer("Second Floor Layer");
+        thirdFloorLayer = FindLayer("Third Floor Layer");
+
+    }
+
+    private GameObject FindLayer(string layerName)
+    {
+        GameObject found = GameObject.Find(layerName);
+        if (found == null)
+        {
+            found = FindInactiveObjectByName(layerName);
+            if (found == null)
+            {
+                Debug.LogWarning($"Layer \"{layerName}\" not found in the scene (active or inactive).");
+            }
+        }
+        return found;
+    }
+
+    private GameObject FindInactiveObjectByName(string name)
+    {
+        GameObject[] allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
+        foreach (GameObject obj in allObjects)
+        {
+            if (obj.name == name && obj.hideFlags == HideFlags.None && obj.scene.IsValid())
+                return obj;
+        }
+        return null;
+    }
+
+
+    #endregion
 }

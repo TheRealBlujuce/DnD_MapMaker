@@ -1,53 +1,75 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using static InitiativeUIManager;
 
 public class InitiativeUpdater : MonoBehaviour
 {
     public InitiativeUIManager initiativeUIManager;
     public List<InitiativeEntry> newEntries = new List<InitiativeEntry>();
+    public TokenImageDatabase tokenImageDB;
+
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        tokenImageDB = FindFirstObjectByType<TokenImageDatabase>();
+    }
+
 
     // Call this to update the initiative order
     public void UpdateInitiativeOrder(List<InitiativeEntry> players, List<InitiativeEntry> enemies)
     {
-        //Debug.Log("Sorting New Entries");
         newEntries.Clear();
         initiativeUIManager.entries.Clear();
 
         foreach (var player in players)
         {
-            InitiativeEntry playerEntry = new InitiativeEntry
+            Sprite playerSprite = tokenImageDB.GetSpriteById(player.iconID);
+            if (playerSprite == null)
+                Debug.LogWarning($"Sprite not found for player '{player.entryName}' with ID {player.iconID}");
+
+            newEntries.Add(new InitiativeEntry
             {
                 entryName = player.entryName,
                 initiative = player.initiative,
-                icon = player.icon,
-                // Add other fields if needed
-            };
-            newEntries.Add(playerEntry);
+                entryIcon = playerSprite,
+                color = player.color
+            });
         }
 
-        if (enemies.Count != 0)
+
+        foreach (var enemy in enemies)
         {
-            foreach (var enemy in enemies)
+            Sprite enemySprite = tokenImageDB.GetSpriteById(enemy.iconID);
+
+            newEntries.Add(new InitiativeEntry
             {
-                InitiativeEntry enemyEntry = new InitiativeEntry
-                {
-                    entryName = enemy.entryName,
-                    initiative = enemy.initiative,
-                    icon = enemy.icon,
-                    // Add other fields if needed
-                };
-                newEntries.Add(enemyEntry);
-            }
+                entryName = enemy.entryName,
+                initiative = enemy.initiative,
+                entryIcon = enemySprite,
+                color = enemy.color
+            });
         }
 
         newEntries.Sort((a, b) => b.initiative.CompareTo(a.initiative));
 
-        // Update InitiativeUIManager
-        Debug.Log($"Updating Initiative. Players: {players.Count}, Enemies: {enemies.Count}");
-
-        initiativeUIManager.entries = newEntries;
-        initiativeUIManager.UpdateInitiativeUI(newEntries); // Optional method to refresh the list
+        // Send to all clients
+        if (NetworkManager.Singleton.IsHost)
+        {
+            initiativeUIManager.entries = newEntries;
+            initiativeUIManager.UpdateInitiativeUI(newEntries);
+        }
     }
+
+
+
 }

@@ -10,6 +10,7 @@ public class TokenSettings : MonoBehaviour
     public float targetTokenSize;
     public CharacterSize characterSize = CharacterSize.Medium;
     public Sprite tokenIcon;
+    public ulong iconID;
     public float tokenGrowthSpeed = 1.25f;
     public bool tokenIsPlayer;
     public bool tokenIsEnemy;
@@ -21,6 +22,32 @@ public class TokenSettings : MonoBehaviour
     private CharacterSize previousSize;
     private InitiativeUIManager initiativeUIManager;
     private Camera mainCamera;
+
+    public void Initialize(ulong iconId, bool isEnemy, CharacterSize size, string name)
+    {
+        this.iconID = iconId;
+        this.tokenIsEnemy = isEnemy;
+        this.characterSize = size;
+        this.name = name;
+
+        // Assign sprite from the TokenImageDatabase
+        TokenImageDatabase db = FindFirstObjectByType<TokenImageDatabase>();
+        if (db != null)
+        {
+            Sprite sprite = db.GetSpriteById(iconID);
+            tokenIcon = sprite;
+
+            // Make sure the sprite is actually applied to the renderer
+            SpriteRenderer sr = GetComponent<SpriteRenderer>();
+            if (sr != null)
+            {
+                sr.sprite = sprite;
+            }
+        }
+
+        UpdateCharacterTokenSize();
+    }
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -107,7 +134,7 @@ public class TokenSettings : MonoBehaviour
             Collider2D hit = Physics2D.OverlapPoint(mouseWorldPos);
             if (hit != null && hit.gameObject == this.gameObject)
             {
-                Debug.Log("Deleting Token!");
+                //Debug.Log("Deleting Token!");
                 if (tokenIsEnemy)
                 {
                     string tokenName = gameObject.name;
@@ -127,16 +154,16 @@ public class TokenSettings : MonoBehaviour
                             if (GhostTokenPlacer.usedSuffixes.ContainsKey(baseName))
                             {
                                 GhostTokenPlacer.usedSuffixes[baseName].Remove(suffix);
-                                Debug.Log($"Freed suffix {suffix} from {baseName}");
+                                //Debug.Log($"Freed suffix {suffix} from {baseName}");
                             }
                         }
 
-                        Debug.Log($"Removed enemy entry: {tokenName}");
+                        //Debug.Log($"Removed enemy entry: {tokenName}");
                         Destroy(gameObject);
                     }
                     else
                     {
-                        Debug.LogWarning($"No enemy entry found with name: {tokenName}");
+                        //Debug.LogWarning($"No enemy entry found with name: {tokenName}");
                     }
                 }
             }

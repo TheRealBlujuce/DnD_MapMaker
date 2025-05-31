@@ -14,6 +14,7 @@ public class ExpandingCircle : MonoBehaviour
 
     void Start()
     {
+        mainCamera = Camera.main;
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.loop = true;
         lineRenderer.positionCount = segments + 1;

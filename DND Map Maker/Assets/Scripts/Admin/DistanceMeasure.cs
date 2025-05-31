@@ -11,6 +11,10 @@ public class DistanceMeasure : MonoBehaviour
     private Vector3 startPoint;
     private bool isMeasuring = false;
 
+    private void Start()
+    {
+        mainCamera = Camera.main;
+    }
     void Update()
     {
         if (GameManager.Instance.IsToolActive(GameManager.ToolState.Line) && Input.GetMouseButtonDown(1) && !Input.GetKey(KeyCode.LeftShift)) // Right mouse button pressed

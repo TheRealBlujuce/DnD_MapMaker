@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static InitiativeUIManager;
 
@@ -14,6 +15,21 @@ public class InitiativeGUI : MonoBehaviour
 
     private List<InitiativeEntry> players = new List<InitiativeEntry>();
     private List<InitiativeEntry> enemies = new List<InitiativeEntry>();
+    private TokenImageDatabase tokenImageDB;
+
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        tokenImageDB = FindFirstObjectByType<TokenImageDatabase>();
+    }
+
 
     private void Start()
     {
@@ -38,11 +54,16 @@ public class InitiativeGUI : MonoBehaviour
         // Create new rows
         foreach (var player in players)
         {
+            // This gets the sprite from iconID each time
+            Sprite playerSprite = tokenImageDB.GetSpriteById(player.iconID);
+
             var rowObj = Instantiate(rowPrefab, rowContainer);
             var row = rowObj.GetComponent<CharacterInitiativeUI>();
-            row.Initialize(player.entryName, player.initiative, player.icon);
+
+            row.Initialize(player.entryName, player.initiative, playerSprite);
             currentRows.Add(row);
         }
+
     }
 
     public void OnUpdateInitiativeButtonClicked()
@@ -51,14 +72,30 @@ public class InitiativeGUI : MonoBehaviour
 
         foreach (var row in currentRows)
         {
+            Sprite icon = row.GetPlayerIcon();
+
+            ulong iconID = 0;
+            if (icon != null)
+            {
+                iconID = tokenImageDB.GetIdFromSprite(icon);
+                //Debug.LogWarning($"Got ID#: {iconID}  For {row.GetPlayerName()}");
+            }
+            else
+            {
+                //Debug.LogWarning($"Null sprite for {row.GetPlayerName()} — can't assign iconID.");
+            }
+
             updatedPlayers.Add(new InitiativeEntry
             {
                 entryName = row.GetPlayerName(),
-                icon = row.GetPlayerIcon(),
-                initiative = row.GetInitiativeValue()
+                entryIcon = icon,
+                initiative = row.GetInitiativeValue(),
+                iconID = iconID
             });
         }
-        //Debug.Log("Button To Update Entries Clicked");
+
+
         initiativeUpdater.UpdateInitiativeOrder(updatedPlayers, initiativeUIManager.enemyEntries);
     }
+
 }

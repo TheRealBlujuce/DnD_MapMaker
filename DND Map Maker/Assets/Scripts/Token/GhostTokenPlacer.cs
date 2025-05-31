@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
+using Unity.Netcode;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using static InitiativeUIManager;
 
 public class GhostTokenPlacer : MonoBehaviour
@@ -8,6 +11,7 @@ public class GhostTokenPlacer : MonoBehaviour
     [Header("Token Settings")]
     public GameObject tokenPrefab;
     public Sprite icon;
+    public ulong iconId;
     public string baseName = "Enemy";
     public Color color = Color.white;
     public CharacterSize characterSize = CharacterSize.Medium;
@@ -18,7 +22,21 @@ public class GhostTokenPlacer : MonoBehaviour
     public InitiativeUIManager initiativeUIManager;
 
     public static Dictionary<string, HashSet<string>> usedSuffixes = new();
+    private TokenImageDatabase tokenImageDB;
 
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        mainCamera = Camera.main;
+        tokenImageDB = FindFirstObjectByType<TokenImageDatabase>();
+    }
 
     void Update()
     {
@@ -48,8 +66,8 @@ public class GhostTokenPlacer : MonoBehaviour
 
         Vector3 placementPos = mouseWorldPos;
 
-        GameObject tokenGO = Instantiate(tokenPrefab, placementPos, Quaternion.identity);
-
+        //GameObject tokenGO = Instantiate(tokenPrefab, placementPos, Quaternion.identity);
+        
         if (!usedSuffixes.ContainsKey(baseName))
             usedSuffixes[baseName] = new HashSet<string>();
 
@@ -59,22 +77,37 @@ public class GhostTokenPlacer : MonoBehaviour
 
         InitiativeEntry entry = new InitiativeEntry
         {
-            icon = icon,
+            entryIcon = icon,
+            iconID = iconId,
             initiative = Random.Range(1, 21),
             entryName = fullName,
             color = color
         };
         initiativeUIManager.enemyEntries.Add(entry);
 
-        tokenGO.name = fullName;
-        tokenGO.GetComponent<TokenSettings>().tokenIcon = icon;
-        tokenGO.GetComponent<TokenSettings>().tokenIsEnemy = true;
-        tokenGO.GetComponent<TokenSettings>().characterSize = characterSize;
+        SpawnTokenServerRpc(placementPos, iconId, true, characterSize, fullName);
 
-        Debug.Log($"Spawned {fullName} at {placementPos}");
+        //tokenGO.name = fullName;
+        //tokenGO.GetComponent<TokenSettings>().tokenIcon = icon;
+        //tokenGO.GetComponent<TokenSettings>().iconID = iconId;
+        //tokenGO.GetComponent<TokenSettings>().tokenIsEnemy = true;
+        //tokenGO.GetComponent<TokenSettings>().characterSize = characterSize;
+
+
+        //Debug.Log($"Spawned {fullName} at {placementPos}");
 
         Destroy(gameObject);
     }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SpawnTokenServerRpc(Vector3 position, ulong iconId, bool isEnemy, CharacterSize size, string fullName)
+    {
+        GameObject token = Instantiate(tokenPrefab, position, Quaternion.identity);
+        //token.GetComponent<NetworkObject>().Spawn();
+
+        token.GetComponent<TokenSettings>().Initialize(iconId, isEnemy, size, fullName);
+    }
+
 
     string GetNextAvailableSuffix(string baseName)
     {

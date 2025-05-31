@@ -3,24 +3,38 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
+using Unity.Netcode;
+using UnityEngine.SceneManagement;
 
-public class InitiativeUIManager : MonoBehaviour
+public class InitiativeUIManager : NetworkBehaviour
 {
     [System.Serializable]
-    public class InitiativeEntry
+    public class InitiativeEntry : INetworkSerializable
     {
-        public Sprite icon;
-        public int initiative;
+        public Sprite entryIcon;
         public string entryName;
+        public int initiative;
         public Color color = Color.white;
+        public ulong iconID;
+
+        public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+        {
+            serializer.SerializeValue(ref entryName);
+            serializer.SerializeValue(ref initiative);
+            serializer.SerializeValue(ref iconID);
+        }
     }
 
     public List<InitiativeEntry> playerEntries = new List<InitiativeEntry>();
     public List<InitiativeEntry> enemyEntries = new List<InitiativeEntry>();
     public List<InitiativeEntry> entries = new List<InitiativeEntry>();
     [SerializeField] private List<GameObject> spawnedEntries = new List<GameObject>();
+    [SerializeField] private List<GameObject> spawnedClientEntries = new List<GameObject>();
+
+    public TokenImageDatabase tokenImageDB;
     public GameObject entryPrefab;
     public GameObject initiativeHolder;
+    public GameObject clientInitiativeHolder;
     public float spacing = 80f;
     public int visibleCount = 8;
     public float scrollSpeed = 5f;
@@ -42,11 +56,25 @@ public class InitiativeUIManager : MonoBehaviour
 
     private bool isUpdating;
 
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        clientInitiativeHolder = FindGameObjectByName("Initiative Holder - Client");
+        tokenImageDB = FindFirstObjectByType<TokenImageDatabase>();
+        SetIconIDsForAllPlayers();
+		
+    }
 
     void Start()
     {
         UpdateVisuals();
-        
     }
 
     void Update()
@@ -101,7 +129,21 @@ public class InitiativeUIManager : MonoBehaviour
             TextMeshProUGUI name = go.transform.Find("Name").GetComponent<TextMeshProUGUI>();
             Image bg = icon;
 
-            icon.sprite = data.icon;
+            // Get the sprite by the entry's iconID
+            data.iconID = tokenImageDB.GetIdFromSprite(data.entryIcon);
+            Sprite sprite = tokenImageDB.GetSpriteById(data.iconID);
+
+            // Use the sprite in your UI (e.g., set it on an Image component)
+            if (sprite != null)
+            {
+                icon.sprite = sprite;
+            }
+            else
+            {
+                //Debug.LogWarning($"Sprite not found for iconID: {data.iconID}");
+            }
+
+
             name.text = data.entryName;
             bg.color = data.color;
 
@@ -119,6 +161,74 @@ public class InitiativeUIManager : MonoBehaviour
         isUpdating = false;
         turnBanner.transform.SetAsLastSibling();
         yield return ShowTurnBanner(entries[selectedIndex].entryName);
+    }
+
+    IEnumerator UpdateAllClientEntriesCoroutine(List<InitiativeEntry> newEntryList)
+    {
+        isUpdating = true;
+
+        // Destroy all spawned entries
+        for (int i = 0; i < spawnedClientEntries.Count; i++)
+        {
+            Destroy(spawnedClientEntries[i]);
+            yield return null;
+        }
+
+        spawnedClientEntries.Clear(); //  Now safe to clear
+
+        // Spawn new entries
+        for (int i = 0; i < newEntryList.Count; i++)
+        {
+            InitiativeEntry data = newEntryList[i];
+            if (!entryPrefab)
+            {
+                //Debug.Log("Cant find an Entry Prefab :(");
+                yield break;
+            }
+            GameObject go = Instantiate(entryPrefab, clientInitiativeHolder.transform);
+            go.name = $"Entry_{i}";
+
+            RectTransform rt = go.GetComponent<RectTransform>();
+            rt.anchorMin = new Vector2(0.55f, 0.93f);
+            rt.anchorMax = new Vector2(0.55f, 0.93f);
+            rt.pivot = new Vector2(0.5f, 0.5f);
+
+            Image icon = go.transform.Find("Icon").GetComponent<Image>();
+            TextMeshProUGUI name = go.transform.Find("Name").GetComponent<TextMeshProUGUI>();
+            Image bg = icon;
+
+            // Get the sprite by the entry's iconID
+            data.iconID = tokenImageDB.GetIdFromSprite(data.entryIcon);
+            Sprite sprite = tokenImageDB.GetSpriteById(data.iconID);
+
+            // Use the sprite in your UI (e.g., set it on an Image component)
+            if (sprite != null)
+            {
+                icon.sprite = sprite;
+            }
+            else
+            {
+                //Debug.LogWarning($"Sprite not found for iconID: {data.iconID}");
+            }
+
+
+            name.text = data.entryName;
+            bg.color = data.color;
+
+            if (!go.TryGetComponent(out CanvasGroup cg))
+                cg = go.AddComponent<CanvasGroup>();
+
+            spawnedClientEntries.Add(go);
+
+            yield return null; // wait one frame between spawns
+        }
+
+        // Optionally reset scroll position and selected index if needed
+        selectedIndex = 0;
+        targetOffset = 0f;
+        isUpdating = false;
+        //turnBanner.transform.SetAsLastSibling();
+        //yield return ShowTurnBanner(entries[selectedIndex].entryName);
     }
 
 
@@ -201,9 +311,76 @@ public class InitiativeUIManager : MonoBehaviour
         }
     }
 
+    public void SetIconIDsForAllPlayers()
+    {
+        foreach (var playerEntry in playerEntries)
+        {
+            // Assuming you have a method in your TokenImageDatabase to get the ID from a Sprite
+            // Set the iconID using the sprite stored in the player entry.
+            playerEntry.iconID = tokenImageDB.GetIdFromSprite(playerEntry.entryIcon);
+
+            // Optionally, you can log the process to verify it's working.
+            //Debug.Log($"Set iconID for {playerEntry.entryName}: {playerEntry.iconID}");
+        }
+    }
+
+
+    // This is for the Admin
     public void UpdateInitiativeUI(List<InitiativeEntry> newEntries)
     {
         //Debug.Log("Updating Entries");
         StartCoroutine(UpdateAllEntriesCoroutine(newEntries));
+        UpdateClientInitiativeUI(newEntries);
     }
+    // This is for the Client
+    public void UpdateClientInitiativeUI(List<InitiativeEntry> newEntries)
+    {
+        //Debug.Log("Updating Entries");
+        StartCoroutine(UpdateAllClientEntriesCoroutine(newEntries));
+    }
+    GameObject FindGameObjectByName(string name)
+    {
+        GameObject[] allGameObjects = Object.FindObjectsOfType<GameObject>(true); // true allows for inactive objects to be included
+        foreach (GameObject go in allGameObjects)
+        {
+            if (go.name == name)
+            {
+                return go;
+            }
+        }
+        return null; // Return null if no object is found with the specified name
+    }
+
+	public void ClearAndRefreshInitiative()
+	{
+		// Clear all initiative-related lists
+		
+		enemyEntries.Clear();
+		entries.Clear();
+
+		// Optionally clear icon IDs if needed (probably not necessary)
+		foreach (var go in spawnedEntries)
+		{
+			Destroy(go);
+		}
+
+		spawnedEntries.Clear();
+
+		foreach (var go in spawnedClientEntries)
+		{
+			Destroy(go);
+		}
+
+		spawnedClientEntries.Clear();
+
+		// Reset indices and scrolling
+		selectedIndex = 0;
+		scrollOffset = 0f;
+		targetOffset = 0f;
+
+		// Refresh visuals
+		UpdateVisuals();
+	}
+
+
 }

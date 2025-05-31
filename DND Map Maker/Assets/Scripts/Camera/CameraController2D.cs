@@ -46,7 +46,6 @@ public class CameraController2D : MonoBehaviour
         }
     }
 
-
     void HandlePan()
     {
         if (Input.GetMouseButtonDown(0) && Input.GetKey(KeyCode.LeftShift))
@@ -59,6 +58,7 @@ public class CameraController2D : MonoBehaviour
             Vector3 currentMousePosition = cam.ScreenToWorldPoint(Input.mousePosition);
             Vector3 delta = lastMousePosition - currentMousePosition;
             transform.position += delta;
+			transform.position = new Vector3(transform.position.x, transform.position.y, -1f);
         }
     }
 }

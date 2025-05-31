@@ -6,8 +6,26 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Connect.unity
+    guid: aa162dd3e9d7b6a4a843113f911235da
+  - enabled: 1
+    path: Assets/Scenes/Yunhai Port.unity
+    guid: abc4120c0ecf60349831d8e7b2a1e6eb
+  - enabled: 1
     path: Assets/Scenes/Road to Monastery 1.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
+  - enabled: 1
+    path: Assets/Scenes/Bailin Village.unity
+    guid: 9c0140f830f123640b33b5d8c8ce9dc2
+  - enabled: 1
+    path: Assets/Scenes/Road to Monastery 2.unity
+    guid: 4792bc45234e16b44b4de0d9347de6fc
+  - enabled: 1
+    path: Assets/Scenes/Monastery of Falling Snow.unity
+    guid: 24b6169566040c446a4b0ad255966da2
+  - enabled: 1
+    path: Assets/Scenes/Path to Shrine of Fear.unity
+    guid: da0a433c96cd7264c868c57ef8596911
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

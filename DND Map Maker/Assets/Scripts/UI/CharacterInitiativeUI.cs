@@ -10,16 +10,18 @@ public class CharacterInitiativeUI : MonoBehaviour
     public Image iconSprite;
 
     private string characterName;
-    private Sprite characterIcon;
+    public Sprite characterIcon;
 
     public void Initialize(string name, int initiative, Sprite imageIcon)
     {
+        //Debug.Log($"[INIT] Initializing UI for {name} with sprite: {imageIcon?.name ?? "NULL"}");
         characterIcon = imageIcon;
         iconSprite.sprite = characterIcon;
         characterName = name;
         nameText.text = name;
         initiativeInput.text = initiative.ToString();
     }
+
 
     public string GetPlayerName() => characterName;
 

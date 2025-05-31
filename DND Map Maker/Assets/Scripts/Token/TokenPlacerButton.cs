@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class TokenPlacerButton : MonoBehaviour
 {
@@ -11,6 +12,22 @@ public class TokenPlacerButton : MonoBehaviour
     public Camera mainCamera;
     public LayerMask placementLayer;
     public InitiativeUIManager initiativeUIManager;
+    private TokenImageDatabase tokenImageDB;
+
+
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        tokenImageDB = FindFirstObjectByType<TokenImageDatabase>();
+        mainCamera = Camera.main;
+    }
 
     public void StartPlacement()
     {
@@ -20,6 +37,7 @@ public class TokenPlacerButton : MonoBehaviour
         var placer = ghost.GetComponent<GhostTokenPlacer>();
         placer.tokenPrefab = tokenPrefab;
         placer.icon = icon;
+        placer.iconId = tokenImageDB.GetIdFromSprite(icon);
         placer.baseName = baseName;
         placer.color = color;
         placer.mainCamera = mainCamera;
