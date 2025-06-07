@@ -2,15 +2,24 @@ using UnityEngine;
 using System;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
+using NUnit.Framework;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
     public GameObject adminUI;
+	public float worldWindDirection = 45f;
+	public float currentWorldWindDirection = 0f;
+	public float windDirectionRotationSpeed = 2f;
+	public float windDirectionRotationAmount = 22.5f;
+	public bool currentLeafSpawnState = true;
+
     private Camera mainCamera;
     private DistanceMeasure distanceTool;
     private ExpandingCircle circleTool;
     private TilemapLayerSwitcher tilemapLayerSwitcher;
+	
     public enum ToolState
     {
         None,
@@ -61,6 +70,7 @@ public class GameManager : MonoBehaviour
     }
 
 #region Set and Swap Admin Tools
+
     public void SetTool(ToolState newTool)
     {
         if (CurrentTool != newTool)
@@ -85,7 +95,49 @@ public class GameManager : MonoBehaviour
     }
 
 #endregion
-    private void UpdateAdminUIState()
+
+#region Set Wind Direction and Leaf Particle Spawning
+
+	public void UpdateWindDirection()
+	{
+
+		if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.LeftArrow)){ worldWindDirection -= windDirectionRotationAmount; }
+		if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.RightArrow)){ worldWindDirection += windDirectionRotationAmount; }
+		if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.L))
+		{ 
+			if (currentLeafSpawnState == true)
+			{
+				currentLeafSpawnState = false;
+				UpdateWorldLeafSpawn(currentLeafSpawnState);
+			}
+			else
+			{
+				currentLeafSpawnState = true;
+				UpdateWorldLeafSpawn(currentLeafSpawnState);
+			}
+		}
+
+		currentWorldWindDirection = Mathf.Lerp(currentWorldWindDirection, worldWindDirection,  windDirectionRotationSpeed * Time.deltaTime);
+
+		worldWindDirection = Mathf.Clamp(worldWindDirection, 0, 360);
+
+		
+	}
+
+	public void UpdateWorldLeafSpawn(bool leafSpawnState)
+	{
+		TreeHandler[] worldTrees = FindObjectsByType<TreeHandler>(FindObjectsSortMode.None);
+
+		foreach (TreeHandler tree in worldTrees)
+		{
+			tree.SetLeafPartSystemState(leafSpawnState);
+		}
+	
+	}
+
+#endregion
+
+	private void UpdateAdminUIState()
     {
         if (NetworkManager.Singleton.IsHost)
         {
@@ -101,5 +153,6 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         SwapCurrentTool();
+		UpdateWindDirection();
     }
 }

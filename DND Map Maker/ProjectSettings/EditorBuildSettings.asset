@@ -26,6 +26,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Path to Shrine of Fear.unity
     guid: da0a433c96cd7264c868c57ef8596911
+  - enabled: 1
+    path: Assets/Scenes/Road to Mountain Shrine - SideQuest.unity
+    guid: b2bd5d67bb61b3d499a4610d32489c2a
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

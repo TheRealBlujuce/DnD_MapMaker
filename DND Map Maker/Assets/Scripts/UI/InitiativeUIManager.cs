@@ -85,7 +85,7 @@ public class InitiativeUIManager : NetworkBehaviour
 
     void HandleScroll()
     {
-        if (isAnimating || isScrolling) return;
+        if (isAnimating || isScrolling || Input.GetKey(KeyCode.LeftShift)) return;
 
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {

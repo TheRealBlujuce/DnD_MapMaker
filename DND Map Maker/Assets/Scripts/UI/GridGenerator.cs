@@ -38,7 +38,7 @@ public class GridGenerator : MonoBehaviour
 
                 Vector3 worldPos = groundTilemap.GetCellCenterWorld(cellPos);
                 GameObject grid = Instantiate(tilePrefab, worldPos, Quaternion.identity, transform);
-                grid.GetComponent<SpriteRenderer>().sortingOrder = 1;
+                grid.GetComponent<SpriteRenderer>().sortingOrder = 10;
             }
         }
     }
